@@ -1,0 +1,20 @@
+[
+  {
+    "name": "All in One Runtimes 2.5.0",
+    "servers": [
+      {
+        "name": "Servidor 1",
+        "url": "https://allinoneruntimes.org/files/aio-runtimes_v2.5.0.exe"
+      }
+    ]
+  },
+  {
+    "name": "DirectX",
+    "servers": [
+      {
+        "name": "Servidor 1",
+        "url": "https://download.microsoft.com/download/1/7/1/1718CCC4-6315-4D8E-9543-8E28A4E18C4C/dxwebsetup.exe"
+      }
+    ]
+  }
+]

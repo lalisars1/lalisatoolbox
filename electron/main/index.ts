@@ -4,6 +4,9 @@ import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import os from 'node:os'
 import { update } from './update'
+import { download, CancelError } from 'electron-dl';
+
+import { spawn } from 'child_process'
 
 const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -44,11 +47,15 @@ const preload = path.join(__dirname, '../preload/index.mjs')
 const indexHtml = path.join(RENDERER_DIST, 'index.html')
 
 async function createWindow() {
+  const username = os.userInfo().username;
+
   win = new BrowserWindow({
-    title: 'Main window',
+    title: 'LalisaToolBox',
+    frame: false,
     icon: path.join(process.env.VITE_PUBLIC, 'favicon.ico'),
     webPreferences: {
       preload,
+      nodeIntegration: true
       // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production
       // nodeIntegration: true,
 
@@ -68,8 +75,11 @@ async function createWindow() {
 
   // Test actively push message to the Electron-Renderer
   win.webContents.on('did-finish-load', () => {
+    win?.webContents.send('os-data', { username, version: os.version() });
     win?.webContents.send('main-process-message', new Date().toLocaleString())
   })
+
+
 
   // Make all links open with the browser, not with the application
   win.webContents.setWindowOpenHandler(({ url }) => {
@@ -79,6 +89,20 @@ async function createWindow() {
 
   // Auto update
   update(win)
+
+  ipcMain.on('download-button', async (event, url ) => {
+console.log(url);
+    const win = BrowserWindow.getFocusedWindow();
+    try {
+        console.log(await download(win, url));
+    } catch (error) {
+      if (error instanceof CancelError) {
+        console.info('item.cancel() was called');
+      } else {
+        console.error(error);
+      }
+    }
+  });
 }
 
 app.whenReady().then(createWindow)
@@ -105,6 +129,7 @@ app.on('activate', () => {
   }
 })
 
+
 // New window example arg: new windows url
 ipcMain.handle('open-win', (_, arg) => {
   const childWindow = new BrowserWindow({
@@ -121,3 +146,16 @@ ipcMain.handle('open-win', (_, arg) => {
     childWindow.loadFile(indexHtml, { hash: arg })
   }
 })
+
+
+ipcMain.addListener('app-close', () => {
+  win?.close();
+})
+ipcMain.addListener('app-minimize', () => {
+  win?.minimize();
+})
+
+function execSync(command: string, arg1: { encoding: string }) {
+  throw new Error('Function not implemented.')
+}
+
