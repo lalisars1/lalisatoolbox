@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { createContext, useState, useEffect, ReactNode } from "react";
 
-interface DownloadItem {
-  id: number;
-  name: string;
-  url: string;
-}
-
 interface DownloadContextType {
   downloadList: DownloadItem[];
   setDownloadList: (list: DownloadItem[]) => void;
   addDownload: (download: DownloadItem) => void;
   removeDownload: (itemId: number) => void;
   isDownloadExist: (url: string) => boolean;
+}
+
+interface DownloadItem {
+  id: number;
+  name: string;
+  url: string;
 }
 
 const DownloadContext = createContext<DownloadContextType | undefined>(
@@ -34,8 +34,8 @@ export const DownloadManagerProvider: React.FC<{ children: ReactNode }> = ({
     );
   };
 
-  const isDownloadExist = (url: string): boolean => {
-    return downloadList.some((download) => download.url === url);
+  const isDownloadExist = (str: string): boolean => {
+    return downloadList.some((download) => download.name === str);
   };
 
   useEffect(() => {

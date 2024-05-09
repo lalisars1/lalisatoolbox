@@ -89,20 +89,6 @@ async function createWindow() {
 
   // Auto update
   update(win)
-
-  ipcMain.on('download-button', async (event, url ) => {
-console.log(url);
-    const win = BrowserWindow.getFocusedWindow();
-    try {
-        console.log(await download(win, url));
-    } catch (error) {
-      if (error instanceof CancelError) {
-        console.info('item.cancel() was called');
-      } else {
-        console.error(error);
-      }
-    }
-  });
 }
 
 app.whenReady().then(createWindow)

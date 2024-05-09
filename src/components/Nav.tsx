@@ -24,7 +24,7 @@ export default function Nav() {
           {
             icon: <Binary size={18} />,
             name: "Utilitários",
-            href: "/download/utils",
+            href: "/download/utilities",
           },
           {
             icon: <Binary size={18} />,
